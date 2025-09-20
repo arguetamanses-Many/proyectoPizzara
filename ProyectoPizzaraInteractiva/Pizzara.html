@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Pizarra Interactiva</title>
+    <link rel="stylesheet" href="EstiloPizzara.css">
+</head>
+<body>
+    <h1>Pizarra Interactiva</h1>
+    <div class="controles">
+        Color: <input type="color" id="color" value="#000000">
+        Grosor: <input type="range" id="grosor" min="1" max="20" value="2">
+        <select id="herramienta">
+            <option value="lapiz">Lápiz</option>
+            <option value="linea">Línea</option>
+            <option value="rectangulo">Rectángulo</option>
+            <option value="triangulo">Triángulo</option>
+        </select>
+        <button class="boton-deshazer" onclick="deshacer()">Deshacer</button>
+        <button class="boton-rehazer" onclick="rehacer()">Rehacer</button>
+        <button  class="boton-guardar" onclick="guardarImagen()">Guardar como imagen</button>
+    </div>
+    <canvas id="pizarra" width="800" height="500"></canvas>
+    <br>
+    <button class="boton-limpiar" onclick="limpiarPizarra()">Limpiar</button>
+    <script>
+        const canvas = document.getElementById('pizarra');
+        const ctx = canvas.getContext('2d');
+        const colorInput = document.getElementById('color');
+        const grosorInput = document.getElementById('grosor');
+        const herramientaInput = document.getElementById('herramienta');
+
+        let dibujando = false;
+        let startX = 0, startY = 0;
+        let imagenTemp = null;
+        let historial = [];
+        let historialRedo = [];
+
+        
+        function guardarEstado() {
+            historial.push(canvas.toDataURL());
+            if (historial.length > 50) historial.shift();
+            historialRedo = [];
+        }
+
+    
+        function restaurarEstado(dataURL) {
+            let img = new window.Image();
+            img.src = dataURL;
+            img.onload = function() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+            }
+        }
+
+        
+        function deshacer() {
+            if (historial.length > 1) {
+                historialRedo.push(historial.pop());
+                restaurarEstado(historial[historial.length - 1]);
+            }
+        }
+
+        function rehacer() {
+            if (historialRedo.length > 0) {
+                let dataURL = historialRedo.pop();
+                historial.push(dataURL);
+                restaurarEstado(dataURL);
+            }
+        }
+
+        function limpiarPizarra() {
+            guardarEstado();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function guardarImagen() {
+            const enlace = document.createElement('a');
+            enlace.download = 'pizarra.png';
+            enlace.href = canvas.toDataURL();
+            enlace.click();
+        }
+
+        function getPos(e) {
+            if (e.touches) {
+                const rect = canvas.getBoundingClientRect();
+                return {
+                    x: e.touches[0].clientX - rect.left,
+                    y: e.touches[0].clientY - rect.top
+                };
+            } else {
+                return { x: e.offsetX, y: e.offsetY };
+            }
+        }
+
+        function comenzarDibujo(e) {
+            dibujando = true;
+            ctx.strokeStyle = colorInput.value;
+            ctx.lineWidth = grosorInput.value;
+            startX = getPos(e).x;
+            startY = getPos(e).y;
+            if (herramientaInput.value === 'lapiz') {
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+            } else {
+                imagenTemp = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            }
+            e.preventDefault();
+        }
+
+        function dibujar(e) {
+            if (!dibujando) return;
+            let { x, y } = getPos(e);
+            ctx.strokeStyle = colorInput.value;
+            ctx.lineWidth = grosorInput.value;
+            if (herramientaInput.value === 'lapiz') {
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            } else {
+                ctx.putImageData(imagenTemp, 0, 0);
+                ctx.beginPath();
+                if (herramientaInput.value === 'linea') {
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(x, y);
+                } else if (herramientaInput.value === 'rectangulo') {
+                    ctx.rect(startX, startY, x - startX, y - startY);
+                } else if (herramientaInput.value === 'triangulo') {
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(x, y);
+                    ctx.lineTo(startX, y);
+                    ctx.closePath();
+                }
+                ctx.stroke();
+            }
+            e.preventDefault();
+        }
+
+        function terminarDibujo(e) {
+            if (!dibujando) return;
+            dibujar(e);
+            dibujando = false;
+            guardarEstado();
+            e.preventDefault();
+        }
+
+
+        canvas.addEventListener('mousedown', comenzarDibujo);
+        canvas.addEventListener('mousemove', dibujar);
+        canvas.addEventListener('mouseup', terminarDibujo);
+        canvas.addEventListener('mouseleave', terminarDibujo);
+
+    
+        canvas.addEventListener('touchstart', comenzarDibujo, { passive: false });
+        canvas.addEventListener('touchmove', dibujar, { passive: false });
+        canvas.addEventListener('touchend', terminarDibujo, { passive: false });
+        canvas.addEventListener('touchcancel', terminarDibujo, { passive: false });
+
+        
+        window.onload = function() {
+            guardarEstado();
+        };
+    </script>
+</body>
+</html>

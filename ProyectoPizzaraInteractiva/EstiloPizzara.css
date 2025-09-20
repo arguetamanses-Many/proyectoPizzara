@@ -1,0 +1,79 @@
+ body { 
+        text-align: center;
+        background: #283c86;  
+        background: -webkit-linear-gradient(to right, #45a247, #283c86);  
+        background: linear-gradient(to right, #45a247, #283c86); 
+         }
+        canvas { 
+            border: 2px solid #000;
+            background: #fff; 
+            cursor: crosshair; 
+            touch-action: none;
+         }
+        .controles { 
+            margin-bottom: 10px;
+            
+         }
+        .boton-limpiar {
+            margin-top: 10px;
+            border-radius: 50px;
+            background: linear-gradient(90deg, #ff0066, #ff6600);
+            padding: 15px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 0, 102, 0);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            color: white;
+            border: none;
+         }
+            .boton-limpiar:hover {
+                box-shadow: 0 10px 20px rgba(255, 0, 102, 0.5);
+                transform: translateY(-3px);
+            }
+         .boton-deshazer{
+            border-radius: 50px;
+            background: linear-gradient(90deg,#ff0066 ,#ff6600);
+            padding: 15px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 0, 102, 0);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            color: white;
+            border: none;
+         }
+            .boton-deshazer:hover {
+                box-shadow: 0 10px 20px rgba(255, 0, 102, 0.5);
+                transform: translateY(-3px);
+            }
+        .boton-rehazer{
+                margin-top: 10px;
+                border-radius: 50px;
+                background: linear-gradient(90deg,#ff0066, #ff6600);
+                padding: 15px 30px;
+                font-size: 16px;
+                cursor: pointer;
+                box-shadow: 0 4px 15px rgba(255, 0, 102, 0);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            color: white;
+            border: none;
+            }
+            .boton-rehazer:hover {
+                box-shadow: 0 10px 20px rgba(255, 0, 102, 0.5);
+                transform: translateY(-3px);
+            }
+            .boton-guardar{
+                margin-top: 10px;
+                border-radius: 50px;
+                background: linear-gradient(90deg,#ff0066, #ff6600);
+                padding: 15px 30px;
+                font-size: 16px;
+                cursor: pointer;
+                box-shadow: 0 4px 15px rgba(255, 0, 102, 0);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            color: white;
+            border: none;
+            }
+            .boton-guardar:hover {
+                box-shadow: 0 10px 20px rgba(255, 0, 102, 0.5);
+                transform: translateY(-3px);
+            }
